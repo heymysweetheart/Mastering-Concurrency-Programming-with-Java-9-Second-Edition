@@ -17,9 +17,9 @@ public class ParallelGrouplMain {
 	public static void main(String[] args) {
 
 		BankMarketingLoader loader = new BankMarketingLoader();
-		List<BankMarketing> train = loader.load("data\\bank.data");
+		List<BankMarketing> train = loader.load(DataUtil.BankPath);
 		System.out.println("Train: " + train.size());
-		List<BankMarketing> test = loader.load("data\\bank.test");
+		List<BankMarketing> test = loader.load(DataUtil.TestPath);
 		System.out.println("Test: " + test.size());
 		double currentTime = 0.0d;
 		int success = 0, mistakes = 0;

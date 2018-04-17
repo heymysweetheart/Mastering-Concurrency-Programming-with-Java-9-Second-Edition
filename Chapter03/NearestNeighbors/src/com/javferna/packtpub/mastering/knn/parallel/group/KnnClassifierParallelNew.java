@@ -2,6 +2,7 @@ package com.javferna.packtpub.mastering.knn.parallel.group;
 
 import com.javferna.packtpub.mastering.knn.data.Distance;
 import com.javferna.packtpub.mastering.knn.data.Sample;
+import com.javferna.packtpub.mastering.knn.distances.EuclideanDistanceCalculator;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -65,13 +66,48 @@ public class KnnClassifierParallelNew {
 
 		String[] tags = new String[testSet.size()];
 		
-		Distance[][] distances=new Distance[testSet.size()][dataSet.size()];
+//		Distance[][] distances=new Distance[testSet.size()][dataSet.size()];
 		CountDownLatch countDownLatch =new CountDownLatch(testSet.size());
 
 		for(int i=0; i<testSet.size(); i++) {
-			GroupDistanceTaskNew groupDistanceTaskNew = new GroupDistanceTaskNew(distances[i], 0, dataSet.size(), dataSet,
-					testSet.get(i), countDownLatch, tags, parallelSort, i, k);
-			executor.execute(groupDistanceTaskNew);
+			/*  This is the old way to create a runnable instance */
+//			GroupDistanceTaskNew groupDistanceTaskNew = new GroupDistanceTaskNew(0, dataSet.size(), dataSet,
+//					testSet.get(i), countDownLatch, tags, parallelSort, i, k);
+//			executor.execute(groupDistanceTaskNew);
+
+			/* This is the new way to create a runnable using lambda */
+			Distance[] distances = new Distance[dataSet.size()];
+			int start = 0;
+			int end = dataSet.size();
+			Sample sample = testSet.get(i);
+			int currentIndex = i;
+
+			executor.execute(() -> {
+				for (int index = start; index < end; index++) {
+					Sample localExample=dataSet.get(index);
+					distances[index] = new Distance();
+					distances[index].setIndex(index);
+					distances[index].setDistance(EuclideanDistanceCalculator
+							.calculate(localExample, sample));
+				}
+
+				if (parallelSort) {
+					Arrays.parallelSort(distances);
+				} else {
+					Arrays.sort(distances);
+				}
+
+				Map<String, Integer> results = new HashMap<>();
+				for (int m = 0; m < k; m++) {
+					Sample localExample = dataSet.get(distances[m].getIndex());
+					String tag = localExample.getTag();
+					results.merge(tag, 1, (a, b) -> a+b);
+				}
+
+				tags[currentIndex] = Collections.max(results.entrySet(), Map.Entry.comparingByValue()).getKey();
+			    countDownLatch.countDown();
+
+			});
 		}
 
 		countDownLatch.await();

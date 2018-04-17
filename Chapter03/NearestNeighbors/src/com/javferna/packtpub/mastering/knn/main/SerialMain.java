@@ -21,7 +21,7 @@ public class SerialMain {
 		System.out.println("Train: " + train.size());
 		List<BankMarketing> test = loader.load(DataUtil.TestPath);
 		System.out.println("Test: " + test.size());
-		int testSize = 500;
+		int testSize = 2059;
 		double currentTime = 0d;
 		int success = 0, mistakes = 0;
 		

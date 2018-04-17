@@ -26,7 +26,7 @@ public class ParallelGroupMainSortNew {
 		List<BankMarketing> test = loader.load(DataUtil.TestPath);
 		System.out.println("Test: " + test.size());
 		int success = 0, mistakes = 0;
-		int testSize = 940;
+		int testSize = 2059;
 
 		int k = 10;
 		if (args.length==1) {

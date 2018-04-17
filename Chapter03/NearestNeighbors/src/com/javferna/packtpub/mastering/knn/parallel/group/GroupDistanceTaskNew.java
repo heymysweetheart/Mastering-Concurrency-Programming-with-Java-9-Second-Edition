@@ -46,15 +46,14 @@ public class GroupDistanceTaskNew implements Runnable {
 
 	/**
 	 * Constructor of the class. Initializes all the internal data
-	 * @param distances Array of distances
 	 * @param startIndex Start index that determines the examples of the train data this task will process
 	 * @param endIndex End index that determines the examples of the train data this task will process
 	 * @param dataSet Data set with the train data examples
 	 * @param example Example of the test data we want to classify
 	 */
-	public GroupDistanceTaskNew(Distance[] distances, int startIndex,
+	public GroupDistanceTaskNew(int startIndex,
                                 int endIndex, List<? extends Sample> dataSet, Sample example, CountDownLatch countDownLatch, String[] tags, boolean parallelSort, int i, int k) {
-		this.distances = distances;
+		this.distances = new Distance[dataSet.size()];
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
 		this.example = example;
