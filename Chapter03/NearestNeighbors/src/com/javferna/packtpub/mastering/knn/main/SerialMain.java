@@ -17,10 +17,11 @@ public class SerialMain {
 	public static void main(String[] args) {
 
 		BankMarketingLoader loader = new BankMarketingLoader();
-		List<BankMarketing> train = loader.load("data\\bank.data");
+		List<BankMarketing> train = loader.load(DataUtil.BankPath);
 		System.out.println("Train: " + train.size());
-		List<BankMarketing> test = loader.load("data\\bank.test");
+		List<BankMarketing> test = loader.load(DataUtil.TestPath);
 		System.out.println("Test: " + test.size());
+		int testSize = 500;
 		double currentTime = 0d;
 		int success = 0, mistakes = 0;
 		
@@ -31,11 +32,12 @@ public class SerialMain {
 
 		success = 0;
 		mistakes = 0;
+		List<BankMarketing> marketings = test.subList(0, testSize);
 		KnnClassifier classifier = new KnnClassifier(train, k);
 		try {
 			Date start, end;
 			start = new Date();
-			for (BankMarketing example : test) {
+			for (BankMarketing example : marketings) {
 				String tag = classifier.classify(example);
 				if (tag.equals(example.getTag())) {
 					success++;
@@ -53,7 +55,7 @@ public class SerialMain {
 		System.out.println("Serial Classifier - K: " + k);
 		System.out.println("Success: " + success);
 		System.out.println("Mistakes: " + mistakes);
-		System.out.println("Execution Time: " + (currentTime / 1000)
+		System.out.println("Execution Time: " + (currentTime / (float)1000)
 				+ " seconds.");
 		System.out.println("******************************************");
 
