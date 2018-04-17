@@ -17,17 +17,19 @@ public class ParallelIndividualMainSort {
 	public static void main(String[] args) {
 
 		BankMarketingLoader loader = new BankMarketingLoader();
-		List<BankMarketing> train = loader.load("data\\bank.data");
+		List<BankMarketing> train = loader.load(DataUtil.BankPath);
 		System.out.println("Train: " + train.size());
-		List<BankMarketing> test = loader.load("data\\bank.test");
+		List<BankMarketing> test = loader.load(DataUtil.TestPath);
 		System.out.println("Test: " + test.size());
 		double currentTime = 0.0;
+		int testSize = 500;
 		int success = 0, mistakes = 0;
 		
 		int k = 10;
 		if (args.length==1) {
 			k = Integer.parseInt(args[0]);
-		}		
+		}
+		List<BankMarketing> marketings = test.subList(0, testSize);
 		success = 0;
 		mistakes = 0;
 		KnnClassifierParallelIndividual classifier = new KnnClassifierParallelIndividual(
@@ -35,7 +37,7 @@ public class ParallelIndividualMainSort {
 		try {
 			Date start, end;
 			start = new Date();
-			for (BankMarketing example : test) {
+			for (BankMarketing example : marketings) {
 				String tag = classifier.classify(example);
 				if (tag.equals(example.getTag())) {
 					success++;
